@@ -1,8 +1,15 @@
+import { RouterProvider } from 'react-router'
+
+import { router } from './routes'
+import { useNotification } from './shared/hooks/useNotification'
+
 function App() {
+  const { contextHolder } = useNotification()
 
   return (
     <>
-      <h1>Hello!</h1>
+      {contextHolder}
+      <RouterProvider router={router} />
     </>
   )
 }
