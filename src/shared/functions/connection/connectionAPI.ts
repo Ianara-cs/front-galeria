@@ -9,10 +9,16 @@ export type MethodType = 'get' | 'post' | 'put' | 'patch' | 'delete'
 
 export default class ConnectionAPI {
   static async call<T>(url: string, method: MethodType, body?: unknown): Promise<T> {
+    const isFormData = typeof FormData !== 'undefined' && body instanceof FormData
+
     const config: AxiosRequestConfig = {
       headers: {
         Authorization: `Bearer ${getAuthorizationToken(AUTHORIZATION_KEY)}`,
-        'Content-Type': 'application/json',
+        ...(isFormData
+          ? {}
+          : {
+              'Content-Type': 'application/json',
+            }),
       },
     }
 

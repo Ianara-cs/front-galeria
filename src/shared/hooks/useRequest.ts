@@ -6,6 +6,7 @@ import { useGlobalReducer } from '../../store/reducers/globalReducer/useGlobalRe
 import { AUTHORIZATION_KEY, REFRESH_TOKEN } from '../constants/localStorageConstants'
 import { ERROR_INVALID_PASSWORD } from '../constants/messageErrors'
 import { URL_LOGIN } from '../constants/urls'
+import { MethodsEnum } from '../enums/methods'
 import { setAuthorizationToken } from '../functions/connection/auth'
 import ConnectionAPI, { connectionAPIPost, MethodType } from '../functions/connection/connectionAPI'
 import { TokensType } from '../types/TokensType'
@@ -16,6 +17,15 @@ interface requestParams<T> {
   saveGlobal?: (object: T) => void
   body?: unknown
   message?: string
+  params?: Record<string, any>
+}
+
+interface uploadParams {
+  url: string
+  nameCampo: string
+  body?: unknown
+  message?: string
+  params?: Record<string, any>
 }
 
 export const useRequests = () => {
@@ -28,10 +38,18 @@ export const useRequests = () => {
     saveGlobal,
     body,
     message,
+    params,
   }: requestParams<T>): Promise<T | undefined> => {
     setLoading(true)
 
-    const returnObject: T | undefined = await ConnectionAPI.connect<T>(url, method, body)
+    let fullUrl = url
+
+    if (method === MethodsEnum.GET && params) {
+      const query = new URLSearchParams(params).toString()
+      fullUrl += `?${query}`
+    }
+
+    const returnObject: T | undefined = await ConnectionAPI.connect<T>(fullUrl, method, body)
       .then((result) => {
         if (saveGlobal) {
           saveGlobal(result)
@@ -48,8 +66,6 @@ export const useRequests = () => {
       })
 
     setLoading(false)
-    console.log(returnObject)
-
     return returnObject
   }
 
@@ -71,9 +87,58 @@ export const useRequests = () => {
     setLoading(false)
   }
 
+  const requestUpload = async <T>({
+    url,
+    body,
+    nameCampo,
+    message,
+    params,
+  }: uploadParams): Promise<T | undefined> => {
+    setLoading(true)
+    console.log(body)
+
+    let fullUrl = url
+
+    if (params) {
+      const query = new URLSearchParams(params).toString()
+      fullUrl += `?${query}`
+    }
+
+    if (!Array.isArray(body)) {
+      setNotification('Erro', 'error', 'O corpo deve ser um array de arquivos.')
+      setLoading(false)
+      return undefined
+    }
+
+    const formData = new FormData()
+
+    body.forEach((file, index) => {
+      const f = file.originFileObj
+      if (f instanceof File) {
+        formData.append(nameCampo, f) // ex: imagens[]
+      } else {
+        setNotification('Erro', 'error', `Item ${index + 1} inválido.`)
+      }
+    })
+
+    try {
+      const result: T = await ConnectionAPI.connect<T>(fullUrl, MethodsEnum.POST, formData)
+
+      if (message) setNotification('Sucesso!', 'success', message)
+
+      return result
+    } catch {
+      setNotification('Erro ao enviar imagens', 'error')
+      return undefined
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return {
     loading,
     authRequest,
     request,
+    requestUpload,
   }
 }
