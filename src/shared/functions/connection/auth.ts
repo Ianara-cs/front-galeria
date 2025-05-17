@@ -1,6 +1,7 @@
 import { redirect } from 'react-router'
 
 import { LoginRoutesEnum } from '../../../modules/login/routes'
+import { setUserActions } from '../../../store/reducers/globalReducer'
 import { store } from '../../../store/store'
 import { AUTHORIZATION_KEY } from '../../constants/localStorageConstants'
 import { URL_ME } from '../../constants/urls'
@@ -20,23 +21,22 @@ export const getAuthorizationToken = (key: string) => getItemStorage(key)
 
 export const verifyLoggedIn = async () => {
   const token = getAuthorizationToken(AUTHORIZATION_KEY)
+  const user = store.getState().globalReducer.user
+
   if (!token) {
     return redirect(LoginRoutesEnum.LOGIN)
   }
 
-  const user = store.getState().globalReducer.user
+  if (!user) {
+    const fetchUser = await connectionAPIGet<UserType>(URL_ME).catch(() => {
+      unsetAuthorizationToken(AUTHORIZATION_KEY)
+    })
 
-  if (user) {
-    return null
+    if (!fetchUser) {
+      return redirect(LoginRoutesEnum.LOGIN)
+    }
+
+    store.dispatch(setUserActions(fetchUser))
   }
-
-  const fetchUser = await connectionAPIGet<UserType>(URL_ME).catch(() => {
-    unsetAuthorizationToken(AUTHORIZATION_KEY)
-  })
-
-  if (!fetchUser) {
-    return redirect(LoginRoutesEnum.LOGIN)
-  }
-
   return null
 }

@@ -1,6 +1,6 @@
 import { UploadFile, UploadProps } from 'antd'
 import { useState } from 'react'
-import { redirect } from 'react-router'
+import { useNavigate } from 'react-router'
 
 import { URL_SEND_PHOTOS } from '../../../shared/constants/urls'
 import { useRequests } from '../../../shared/hooks/useRequest'
@@ -9,6 +9,7 @@ import { HomeScreenRoutesEnum } from '../routes'
 export const useUpload = () => {
   const [fileList, setFileList] = useState<UploadFile[]>([])
   const { loading, requestUpload } = useRequests()
+  const navigate = useNavigate()
 
   const handleUpload = async () => {
     await requestUpload({
@@ -17,7 +18,7 @@ export const useUpload = () => {
       body: fileList,
       message: 'Fotos enviadas com sucesso!',
     }).then(() => {
-      redirect(HomeScreenRoutesEnum.HOME_SCREEN)
+      navigate(HomeScreenRoutesEnum.HOME_SCREEN, { replace: true })
     })
   }
   const uploadProps: UploadProps = {
