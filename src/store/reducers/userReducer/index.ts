@@ -3,23 +3,28 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { UserType } from '../../../shared/types/UserType'
 
 export interface UserState {
-  users: UserType[]
+  participants: UserType[]
+  participant?: UserType
 }
 
 const initialState: UserState = {
-  users: [],
+  participants: [],
+  participant: undefined,
 }
 
 export const userSlice = createSlice({
   name: 'userReducer',
   initialState,
   reducers: {
-    setUsersActions: (state, action: PayloadAction<UserType[]>) => {
-      state.users = action.payload
+    setParticipantsActions: (state, action: PayloadAction<UserType[]>) => {
+      state.participants = action.payload
+    },
+    setParticipantActions: (state, action: PayloadAction<UserType | undefined>) => {
+      state.participant = action.payload
     },
   },
 })
 
-export const { setUsersActions } = userSlice.actions
+export const { setParticipantsActions, setParticipantActions } = userSlice.actions
 
 export default userSlice.reducer

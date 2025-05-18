@@ -85,6 +85,12 @@ const Header = () => {
               </div>
               <div
                 className="!px-3 !py-1 rounded-xl cursor-pointer hover:bg-gray-100"
+                onClick={() => navigate(AdminScreenRoutesEnum.USERS)}
+              >
+                <CheckCircleOutlined /> Usuários
+              </div>
+              <div
+                className="!px-3 !py-1 rounded-xl cursor-pointer hover:bg-gray-100"
                 onClick={showModal}
               >
                 <LogoutOutlined /> Sair
