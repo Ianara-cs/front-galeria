@@ -1,40 +1,30 @@
 import { EditOutlined } from '@ant-design/icons'
 import { Avatar, List, Modal, Tag } from 'antd'
-import { useState } from 'react'
 
 import Button from '../../../shared/components/button/button'
 import Input from '../../../shared/components/inputs/input/input'
+import Loading from '../../../shared/components/loading/loading'
 import Screen from '../../../shared/components/screen/screen'
 import Select from '../../../shared/components/select/select'
-import { useInsertUser } from '../hooks/useInsertUser'
 import { useUsers } from '../hooks/useUsers'
 
 const UsersScreen = () => {
-  const { participants, getUsers } = useUsers()
-  const [open, setOpen] = useState(false)
-  const [userId, setUserId] = useState('')
   const {
+    participants,
+    loading,
     isEdit,
     loadingParticipant,
     participant,
-    handleChangeSelect,
-    handleInsertParticipant,
+    canSend,
+    open,
     onChangeInput,
-  } = useInsertUser(userId)
-
-  const showModal = (user?: number) => {
-    setUserId(user ? `${user}` : '')
-    setOpen(true)
-  }
-
-  const handleOk = async () => {
-    await handleInsertParticipant()
-    await getUsers()
-  }
-
-  const handleCancel = () => {
-    setOpen(false)
-  }
+    handleChangeSelect,
+    handleFilterSelect,
+    handleChangeFilter,
+    handleCancel,
+    handleOk,
+    showModal,
+  } = useUsers()
 
   const statusUserOptions = [
     {
@@ -73,7 +63,13 @@ const UsersScreen = () => {
                   Cancelar
                 </Button>
                 ,
-                <Button key="submit" type="primary" loading={loadingParticipant} onClick={handleOk}>
+                <Button
+                  disabled={canSend}
+                  key="submit"
+                  type="primary"
+                  loading={loadingParticipant}
+                  onClick={handleOk}
+                >
                   {isEdit ? 'Salvar' : 'Criar'}
                 </Button>
                 ,
@@ -122,6 +118,7 @@ const UsersScreen = () => {
                 value={`${participant.is_active}`}
                 title="Status:"
                 options={statusUserOptions}
+                className="w-full"
               />
               <Select
                 onChange={(event) => handleChangeSelect(event, 'is_staff')}
@@ -129,6 +126,7 @@ const UsersScreen = () => {
                 value={`${participant.is_staff}`}
                 title="Tipo de Usuário:"
                 options={typeUserOptions}
+                className="w-full"
               />
             </div>
           </div>
@@ -136,13 +134,41 @@ const UsersScreen = () => {
         <div className="w-full !py-8 flex flex-col gap-2 md:w-[70%] xl:w-[50%]">
           <div className="w-full shadow-md !p-4 !mb-8 solid flex flex-wrap gap-2 rounded">
             <div className="w-full sm:flex-3">
-              <Input title="Nome:" />
+              <Input title="Nome:" onChange={(event) => handleChangeFilter(event, 'first_name')} />
             </div>
             <div className="w-full sm:flex-1">
-              <Input title="Nome:" />
+              <Select
+                onChange={(event) => handleFilterSelect(event, 'is_active')}
+                defaultValue={{
+                  value: '',
+                  label: 'Todos',
+                }}
+                title="Status:"
+                options={[
+                  {
+                    value: '',
+                    label: 'Todos',
+                  },
+                  ...statusUserOptions,
+                ]}
+              />
             </div>
             <div className="w-full sm:flex-1">
-              <Input title="Nome:" />
+              <Select
+                onChange={(event) => handleFilterSelect(event, 'is_staff')}
+                defaultValue={{
+                  value: '',
+                  label: 'Todos',
+                }}
+                title="Tipo de Usuário:"
+                options={[
+                  {
+                    value: '',
+                    label: 'Todos',
+                  },
+                  ...typeUserOptions,
+                ]}
+              />
             </div>
           </div>
           <div className="flex justify-between">
@@ -153,49 +179,54 @@ const UsersScreen = () => {
               </Button>
             </div>
           </div>
-
-          <List
-            className="demo-loadmore-list"
-            itemLayout="horizontal"
-            dataSource={participants}
-            renderItem={(item) => (
-              <List.Item
-                actions={[
-                  <Button onClick={() => showModal(item.id)}>
-                    <EditOutlined className="" /> Editar
-                  </Button>,
-                ]}
-              >
-                <List.Item.Meta
-                  avatar={
-                    <Avatar
-                      size={60}
-                      src="https://i.pinimg.com/236x/a1/fe/0e/a1fe0e555897cba0069f16b1b22336fe.jpg"
-                    />
-                  }
-                  title={<span>{`${item.first_name} ${item.last_name}`}</span>}
-                  description={
-                    <div className="flex flex-col">
-                      <span>Username: {item.username}</span>
-                      <span>{item.email}</span>
-                      <div>
-                        {item.is_staff ? (
-                          <Tag color="purple">Admin</Tag>
-                        ) : (
-                          <Tag color="blue">Comun</Tag>
-                        )}
-                        {item.is_active ? (
-                          <Tag color="success">Ativo</Tag>
-                        ) : (
-                          <Tag color="red">Não Ativo</Tag>
-                        )}
+          {loading ? (
+            <div className="flex h-full justify-center items-center">
+              <Loading size="large" />
+            </div>
+          ) : (
+            <List
+              className="demo-loadmore-list"
+              itemLayout="horizontal"
+              dataSource={participants}
+              renderItem={(item) => (
+                <List.Item
+                  actions={[
+                    <Button onClick={() => showModal(item.id)}>
+                      <EditOutlined className="" /> Editar
+                    </Button>,
+                  ]}
+                >
+                  <List.Item.Meta
+                    avatar={
+                      <Avatar
+                        size={60}
+                        src="https://i.pinimg.com/236x/a1/fe/0e/a1fe0e555897cba0069f16b1b22336fe.jpg"
+                      />
+                    }
+                    title={<span>{`${item.first_name} ${item.last_name}`}</span>}
+                    description={
+                      <div className="flex flex-col">
+                        <span>Username: {item.username}</span>
+                        <span>{item.email}</span>
+                        <div>
+                          {item.is_staff ? (
+                            <Tag color="purple">Admin</Tag>
+                          ) : (
+                            <Tag color="blue">Comun</Tag>
+                          )}
+                          {item.is_active ? (
+                            <Tag color="success">Ativo</Tag>
+                          ) : (
+                            <Tag color="red">Não Ativo</Tag>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  }
-                />
-              </List.Item>
-            )}
-          />
+                    }
+                  />
+                </List.Item>
+              )}
+            />
+          )}
         </div>
       </div>
     </Screen>

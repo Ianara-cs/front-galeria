@@ -26,6 +26,7 @@ export const useInsertUser = (userId?: string) => {
     useUsersReducer()
   const [participant, setParticipant] = useState<InsertUser>(DEFAULT_USER)
   const [isEdit, setIsEdit] = useState(false)
+  const [canSend, setCanSend] = useState(true)
   const [loadingParticipant, setLoadingParticipant] = useState(false)
 
   useEffect(() => {
@@ -63,6 +64,17 @@ export const useInsertUser = (userId?: string) => {
     }
   }, [userId])
 
+  useEffect(() => {
+    const { first_name, email, password, username } = participant
+    if (first_name && email && password && username && !isEdit) {
+      setCanSend(false)
+    }
+
+    if (first_name && email && username && isEdit) {
+      setCanSend(false)
+    }
+  }, [participant])
+
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>, nameObject: string) => {
     setParticipant({
       ...participant,
@@ -71,7 +83,6 @@ export const useInsertUser = (userId?: string) => {
   }
 
   const handleChangeSelect = (value: React.ChangeEvent<HTMLSelectElement>, nameObject: string) => {
-    console.log(value)
     setParticipant({
       ...participant,
       [nameObject]: value,
@@ -103,9 +114,13 @@ export const useInsertUser = (userId?: string) => {
   }
 
   return {
+    DEFAULT_USER,
     loadingParticipant,
     participant,
     isEdit,
+    canSend,
+    setParticipant,
+    setCanSend,
     onChangeInput,
     handleChangeSelect,
     handleInsertParticipant,

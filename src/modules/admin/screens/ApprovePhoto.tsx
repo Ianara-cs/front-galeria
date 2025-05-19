@@ -1,8 +1,9 @@
-import { Image, List, Select, Skeleton } from 'antd'
+import { Image, List, Skeleton } from 'antd'
 
 import Button from '../../../shared/components/button/button'
 import Loading from '../../../shared/components/loading/loading'
 import Screen from '../../../shared/components/screen/screen'
+import Select from '../../../shared/components/select/select'
 import { formatDate } from '../../../shared/functions/utils/conversions'
 import { PhotoType } from '../../../shared/types/PhotoType'
 import { useApprovePhoto } from '../hooks/useAprovePhoto'
@@ -14,19 +15,22 @@ const ApprovePhotoScreen = () => {
   return (
     <Screen>
       <div className="flex h-full justify-center">
-        <div className="w-full !pt-10 flex flex-col md:w-[70%] xl:w-[50%]">
-          <div className="w-full flex justify-end">
+        <div className="w-full !pt-8 mb:!pt-10 flex flex-col md:w-[70%] xl:w-[50%]">
+          <div className="w-full flex justify-between items-center !pb-4">
+            <div>Lista de fotos</div>
             <Select
-              labelInValue
+              title="Status:"
               defaultValue={filter}
               value={filter}
-              style={{ width: 200 }}
               onChange={handleChangeFilter}
               options={statusPhoto}
+              className="w-[150px] mb:w-[200px]"
             />
           </div>
           {loading ? (
-            <Loading />
+            <div className="flex h-full justify-center items-center">
+              <Loading />
+            </div>
           ) : (
             <List
               className="demo-loadmore-list"

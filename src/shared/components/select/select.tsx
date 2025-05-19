@@ -8,11 +8,11 @@ interface SelectProps extends SelectPropsAnt {
 
 const Select = ({ title, className, ...props }: SelectProps) => {
   return (
-    <div className={clsx(`flex flex-col items-start w-full ${className}`)}>
+    <div className={clsx('flex flex-col items-start', className)}>
       {title && (
         <div className="not-italic font-normal text-gray-700 text-sm !my-1 !mx-1">{title}</div>
       )}
-      <SelectAnt style={{ width: '100%' }} {...props} />
+      <SelectAnt className="w-full" {...props} />
     </div>
   )
 }
