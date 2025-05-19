@@ -37,12 +37,26 @@ export default class ConnectionAPI {
   static async connect<T>(url: string, method: MethodType, body?: unknown): Promise<T> {
     return ConnectionAPI.call<T>(url, method, body).catch((error) => {
       if (error.response) {
+        const data = error.response.data
+
+        let message = ERROR_CONNECTION
+
+        if (typeof data?.detail === 'string') {
+          message = data.detail
+        } else if (data && typeof data === 'object') {
+          for (const [field, value] of Object.entries(data)) {
+            if (Array.isArray(value) && typeof value[0] === 'string') {
+              message = `${field}: ${value[0]}`
+              break
+            }
+          }
+        }
+
         switch (error.response.status) {
-          case 401:
           case 403:
             throw new Error(ERROR_ACCESS_DENIED)
           default:
-            throw new Error(ERROR_CONNECTION)
+            throw new Error(message)
         }
       }
       throw new Error(ERROR_CONNECTION)
