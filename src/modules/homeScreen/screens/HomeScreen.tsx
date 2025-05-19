@@ -3,21 +3,22 @@ import { PhotoType } from '../../../shared/types/PhotoType'
 import { useHome } from '../hooks/useHome'
 
 const HomeScreen = () => {
-  const { photos } = useHome()
+  const { photos, handleSeePhoto } = useHome()
 
   return (
     <Screen>
-      <div className="!p-4">
-        <h1 className="text-3xl font-bold !mb-6">Inspiração para você</h1>
-
-        {/* Container tipo Masonry usando columns */}
-        <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
+      <div className="w-full">
+        <div className="columns-2 sm:columns-2 md:columns-3 lg:columns-4 gap-4">
           {photos.map((item: PhotoType, index: number) => (
-            <div key={index} className="break-inside-avoid">
+            <div
+              key={index}
+              className="!mb-4 break-inside-avoid"
+              onClick={() => handleSeePhoto(item.id)}
+            >
               <img
                 src={item.imagem}
                 alt={`Imagem ${index + 1}`}
-                className="w-full rounded-lg shadow-md hover:scale-105 transition-transform duration-300"
+                className="w-full rounded-lg shadow-md hover:scale-105 transition-transform duration-300 !mb-2"
               />
             </div>
           ))}
