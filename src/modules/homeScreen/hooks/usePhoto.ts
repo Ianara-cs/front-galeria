@@ -15,6 +15,7 @@ import { useCommentReducer } from '../../../store/reducers/commentReducer/useCom
 export const usePhoto = () => {
   const { photoId } = useParams<{ photoId: string }>()
   const [loading, setLoading] = useState(false)
+  const [loadingComments, setLoadingComments] = useState(false)
   const [photo, setPhoto] = useState<PhotoType | undefined>()
   const [verifyLike, setVerifyLike] = useState(false)
   const { request } = useRequests()
@@ -36,6 +37,7 @@ export const usePhoto = () => {
     }
 
     const getComments = async () => {
+      setLoadingComments(true)
       await request({
         url: URL_COMMENTS,
         method: MethodsEnum.GET,
@@ -44,6 +46,7 @@ export const usePhoto = () => {
           foto_id: photoId,
         },
       })
+      setLoadingComments(false)
     }
 
     getComments()
@@ -109,6 +112,7 @@ export const usePhoto = () => {
     verifyLike,
     comments,
     insertComment,
+    loadingComments,
     handleLike,
     handleComment,
     onChangeInputText,

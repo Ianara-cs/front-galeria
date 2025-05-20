@@ -6,8 +6,7 @@ import { useRequests } from '../../../shared/hooks/useRequest'
 import { PhotoType } from '../../../shared/types/PhotoType'
 
 type FilterType = {
-  value: string
-  label: React.ReactNode
+  aprovada: boolean | string
 }
 
 const statusPhoto = [
@@ -28,18 +27,17 @@ const statusPhoto = [
 export const useApprovePhoto = () => {
   const { loading, request } = useRequests()
   const [photos, setPhotos] = useState<PhotoType[]>([])
-  const [filter, setFilter] = useState<FilterType>(statusPhoto[2])
+  const [filter, setFilter] = useState<FilterType>({ aprovada: false })
 
   const getPhotos = useCallback(async () => {
     let params = {}
-    if (filter.value !== '') {
+    if (filter.aprovada !== '') {
       params = {
-        ...params,
-        aprovada: filter.value,
+        ...filter,
       }
     }
 
-    request({
+    await request({
       url: URL_PHOTOS,
       method: MethodsEnum.GET,
       saveGlobal: setPhotos,
@@ -51,8 +49,12 @@ export const useApprovePhoto = () => {
     getPhotos()
   }, [getPhotos])
 
-  const handleChangeFilter = (value: { value: string; label: React.ReactNode }) => {
-    setFilter(value)
+  const handleChangeFilter = (value: React.ChangeEvent<HTMLSelectElement>, nameObject: string) => {
+    setFilter({
+      ...filter,
+      [nameObject]: value,
+    })
+    console.log('D', filter)
   }
 
   const handleApprovePhoto = (photoId: number) => {

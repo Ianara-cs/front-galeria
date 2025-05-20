@@ -20,9 +20,9 @@ const ApprovePhotoScreen = () => {
             <div>Lista de fotos</div>
             <Select
               title="Status:"
-              defaultValue={filter}
-              value={filter}
-              onChange={handleChangeFilter}
+              defaultValue={`${filter.aprovada}`}
+              value={`${filter.aprovada}`}
+              onChange={(event) => handleChangeFilter(event, 'aprovada')}
               options={statusPhoto}
               className="w-[150px] mb:w-[200px]"
             />

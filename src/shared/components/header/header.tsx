@@ -4,22 +4,25 @@ import {
   HomeOutlined,
   LogoutOutlined,
   PlusOutlined,
+  UsergroupAddOutlined,
 } from '@ant-design/icons'
-import { Avatar, Modal, Popover } from 'antd'
+import { Avatar, Image, Modal, Popover } from 'antd'
 import { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router'
+import { useNavigate } from 'react-router'
+
+import logo from '/assets/logo1.png'
+import avatar from '/assets/user.png'
 
 import { AdminScreenRoutesEnum } from '../../../modules/admin/routes'
 import { HomeScreenRoutesEnum } from '../../../modules/homeScreen/routes'
 import { useGlobalReducer } from '../../../store/reducers/globalReducer/useGlobalReducer'
-import Button from '../button/button'
+import { logout } from '../../functions/connection/auth'
 
 const Header = () => {
   const [open, setOpen] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const navigate = useNavigate()
   const { user } = useGlobalReducer()
-  const location = useLocation()
 
   const showModal = () => {
     setIsModalOpen(true)
@@ -34,34 +37,21 @@ const Header = () => {
   }
 
   return (
-    <header className="bg-white fixed top-0 left-0 right-0 h-[72px] w-full !px-9 flex items-center justify-between shadow-xs z-10">
+    <header className="bg-white fixed top-0 left-0 right-0 h-[72px] w-full !px-3 sm:!px-8 flex items-center justify-between shadow-xs z-10">
       <div className="flex items-center gap-2">
-        <img
-          src="https://e7.pngegg.com/pngimages/289/995/png-clipart-marriage-monogram-engagement-convite-idea-monograma-love-miscellaneous.png"
+        <Image
+          preview={false}
+          src={logo}
           alt=""
-          className="h-15 w-auto object-contain rounded-[50%]"
+          className="!h-12 mb:!h-14 object-contain rounded-full"
         />
-        <span className="text-gray-700 text-xl font-semibold">Galeria Memorável</span>
+        <span className="text-gray-700 text-xl font-semibold">Galeria</span>
       </div>
       <div className="flex justify-center gap-5 ">
-        <div>
-          {location.pathname == '/home' ? (
-            <Button onClick={() => navigate(HomeScreenRoutesEnum.UPLOAD_SCREEN)}>
-              <PlusOutlined /> Adicionar Fotos
-            </Button>
-          ) : (
-            <div
-              className="flex gap-1 hover:border-b hover:border-blue-600 hover:solid cursor-pointer"
-              onClick={() => navigate(HomeScreenRoutesEnum.HOME_SCREEN)}
-            >
-              <HomeOutlined className="text-[12px]" /> Home
-            </div>
-          )}
-        </div>
         <Modal
           title="Atenção!"
-          //open={isModalOpen}
-          //onOk={handleLogout}
+          open={isModalOpen}
+          onOk={() => logout(navigate)}
           onCancel={handleCancel}
           okText="Sim"
           cancelText="Cancelar"
@@ -72,34 +62,44 @@ const Header = () => {
           content={
             <div className="flex flex-col">
               <div
-                className="!px-3 !py-1 rounded-xl cursor-pointer hover:bg-gray-100"
+                className="!px-3 !py-3 rounded-xl cursor-pointer hover:bg-gray-100"
                 onClick={() => navigate(HomeScreenRoutesEnum.HOME_SCREEN)}
               >
-                <HomeOutlined className="text-[12px]" /> Home
+                <HomeOutlined className="text-[14px] !pr-2" /> Home
               </div>
               <div
-                className="!px-3 !py-1 rounded-xl cursor-pointer hover:bg-gray-100"
-                onClick={() => navigate(AdminScreenRoutesEnum.APPROVE)}
+                className="!px-3 !py-3 rounded-xl cursor-pointer hover:bg-gray-100"
+                onClick={() => navigate(HomeScreenRoutesEnum.UPLOAD_SCREEN)}
               >
-                <CheckCircleOutlined /> Aprovar fotos
+                <PlusOutlined className="text-[14px] !pr-2" /> Adicionar Fotos
               </div>
+              {user?.is_staff && (
+                <div
+                  className="!px-3 !py-3 rounded-xl cursor-pointer hover:bg-gray-100"
+                  onClick={() => navigate(AdminScreenRoutesEnum.APPROVE)}
+                >
+                  <CheckCircleOutlined className="text-[14px] !pr-2" /> Aprovar fotos
+                </div>
+              )}
+              {user?.is_staff && (
+                <div
+                  className="!px-3 !py-3 rounded-xl cursor-pointer hover:bg-gray-100"
+                  onClick={() => navigate(AdminScreenRoutesEnum.USERS)}
+                >
+                  <UsergroupAddOutlined className="text-[14px] !pr-2" /> Usuários
+                </div>
+              )}
               <div
-                className="!px-3 !py-1 rounded-xl cursor-pointer hover:bg-gray-100"
-                onClick={() => navigate(AdminScreenRoutesEnum.USERS)}
-              >
-                <CheckCircleOutlined /> Usuários
-              </div>
-              <div
-                className="!px-3 !py-1 rounded-xl cursor-pointer hover:bg-gray-100"
+                className="!px-3 !py-3 rounded-xl cursor-pointer hover:bg-gray-100"
                 onClick={showModal}
               >
-                <LogoutOutlined /> Sair
+                <LogoutOutlined className="text-[14px] !pr-2" /> Sair
               </div>
             </div>
           }
           title={
-            <div className="flex gap-1">
-              <Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=`} />
+            <div className="flex gap-3">
+              <Avatar src={avatar} />
               <div className="flex flex-col">
                 <span>{`${user?.first_name} ${user?.last_name}`}</span>
                 <span className="font-light text-[12px] text-gray-400">{user?.username}</span>
@@ -110,8 +110,8 @@ const Header = () => {
           open={open}
           onOpenChange={handleOpenChange}
         >
-          <div className="flex cursor-pointer">
-            <Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=`} />
+          <div className="flex gap-1 border border-gray-300 !p-2 rounded-lg solid cursor-pointer">
+            <Avatar src={avatar} />
             <DownOutlined className="text-[10px] font-bold" />
           </div>
         </Popover>

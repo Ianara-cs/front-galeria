@@ -1,6 +1,8 @@
 import { EditOutlined } from '@ant-design/icons'
 import { Avatar, List, Modal, Tag } from 'antd'
 
+import avatar from '/assets/user.png'
+
 import Button from '../../../shared/components/button/button'
 import Input from '../../../shared/components/inputs/input/input'
 import Loading from '../../../shared/components/loading/loading'
@@ -197,12 +199,7 @@ const UsersScreen = () => {
                   ]}
                 >
                   <List.Item.Meta
-                    avatar={
-                      <Avatar
-                        size={60}
-                        src="https://i.pinimg.com/236x/a1/fe/0e/a1fe0e555897cba0069f16b1b22336fe.jpg"
-                      />
-                    }
+                    avatar={<Avatar size={60} src={avatar} />}
                     title={<span>{`${item.first_name} ${item.last_name}`}</span>}
                     description={
                       <div className="flex flex-col">

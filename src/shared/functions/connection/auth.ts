@@ -1,9 +1,9 @@
-import { redirect } from 'react-router'
+import { NavigateFunction, redirect } from 'react-router'
 
 import { LoginRoutesEnum } from '../../../modules/login/routes'
 import { setUserActions } from '../../../store/reducers/globalReducer'
 import { store } from '../../../store/store'
-import { AUTHORIZATION_KEY } from '../../constants/localStorageConstants'
+import { AUTHORIZATION_KEY, REFRESH_TOKEN } from '../../constants/localStorageConstants'
 import { URL_ME } from '../../constants/urls'
 import { UserType } from '../../types/UserType'
 import { connectionAPIGet } from './connectionAPI'
@@ -39,4 +39,11 @@ export const verifyLoggedIn = async () => {
     store.dispatch(setUserActions(fetchUser))
   }
   return null
+}
+
+export const logout = (navigate: NavigateFunction) => {
+  store.dispatch(setUserActions(undefined))
+  unsetAuthorizationToken(AUTHORIZATION_KEY)
+  unsetAuthorizationToken(REFRESH_TOKEN)
+  navigate(LoginRoutesEnum.LOGIN)
 }

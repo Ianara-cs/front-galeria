@@ -8,7 +8,7 @@ import { PhotoType } from '../../../shared/types/PhotoType'
 import { HomeScreenRoutesEnum } from '../routes'
 
 export const useHome = () => {
-  const { request } = useRequests()
+  const { loading, request } = useRequests()
   const [photos, setPhotos] = useState<PhotoType[]>([])
   const navigate = useNavigate()
 
@@ -30,6 +30,7 @@ export const useHome = () => {
   }
 
   return {
+    loading,
     photos,
     handleSeePhoto,
   }

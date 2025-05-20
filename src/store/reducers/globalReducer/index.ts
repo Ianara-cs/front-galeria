@@ -20,7 +20,7 @@ export const globalSlice = createSlice({
     setNotificationActions: (state, action: PayloadAction<NotificationType>) => {
       state.notification = action.payload
     },
-    setUserActions: (state, action: PayloadAction<UserType>) => {
+    setUserActions: (state, action: PayloadAction<UserType | undefined>) => {
       state.user = action.payload
     },
   },
