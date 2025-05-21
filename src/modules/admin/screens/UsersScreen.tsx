@@ -60,11 +60,10 @@ const UsersScreen = () => {
           onCancel={handleCancel}
           footer={[
             <div key={1} className="flex justify-end !pt-4">
-              <div className="flex gap-1 sm:w-[50%]">
-                <Button key="back" onClick={handleCancel}>
+              <div className="flex gap-1 w-full sm:w-[50%]">
+                <Button key="back" type="primary" danger onClick={handleCancel}>
                   Cancelar
                 </Button>
-                ,
                 <Button
                   disabled={canSend}
                   key="submit"
@@ -74,7 +73,6 @@ const UsersScreen = () => {
                 >
                   {isEdit ? 'Salvar' : 'Criar'}
                 </Button>
-                ,
               </div>
             </div>,
           ]}

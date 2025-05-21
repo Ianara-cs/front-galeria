@@ -8,11 +8,11 @@ export interface InputProps extends InputPropsAnt {
 
 const Input = ({ title, className, ...props }: InputProps) => {
   return (
-    <div className={clsx('flex flex-col items-start w-full', className)}>
+    <div className={clsx('flex flex-col items-start w-full')}>
       {title && (
         <label className="not-italic font-normal text-gray-700 text-sm !my-1 !mx-1">{title}</label>
       )}
-      <InputAnt {...props} />
+      <InputAnt className={className} {...props} />
     </div>
   )
 }

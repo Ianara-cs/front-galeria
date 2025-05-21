@@ -16,6 +16,7 @@ const PhotoScreen = () => {
     loading,
     photo,
     insertComment,
+    loadingSendComment,
     onChangeInputText,
     handleLike,
     verifyLike,
@@ -63,11 +64,12 @@ const PhotoScreen = () => {
                 className="flex-5/6"
                 onChange={onChangeInputText}
                 value={insertComment.texto}
-                style={{ height: 50, resize: 'none' }}
+                style={{ height: 60, resize: 'none' }}
                 placeholder="Faça um comentário"
               />
               <Button
                 disabled={!insertComment.texto}
+                loading={loadingSendComment}
                 className="flex-1/6"
                 type="primary"
                 onClick={handleComment}

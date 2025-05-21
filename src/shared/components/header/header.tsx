@@ -8,7 +8,7 @@ import {
 } from '@ant-design/icons'
 import { Avatar, Image, Modal, Popover } from 'antd'
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 
 import logo from '/assets/logo1.png'
 import avatar from '/assets/user.png'
@@ -38,7 +38,7 @@ const Header = () => {
 
   return (
     <header className="bg-white fixed top-0 left-0 right-0 h-[72px] w-full !px-3 sm:!px-8 flex items-center justify-between shadow-xs z-10">
-      <div className="flex items-center gap-2">
+      <Link to="/home" className="flex items-center gap-2">
         <Image
           preview={false}
           src={logo}
@@ -46,11 +46,12 @@ const Header = () => {
           className="!h-12 mb:!h-14 object-contain rounded-full"
         />
         <span className="text-gray-700 text-xl font-semibold">Galeria</span>
-      </div>
+      </Link>
       <div className="flex justify-center gap-5 ">
         <Modal
           title="Atenção!"
           open={isModalOpen}
+          zIndex={20}
           onOk={() => logout(navigate)}
           onCancel={handleCancel}
           okText="Sim"
@@ -59,6 +60,7 @@ const Header = () => {
           <p>Tem certeza que deseja sair?</p>
         </Modal>
         <Popover
+          zIndex={15}
           content={
             <div className="flex flex-col">
               <div

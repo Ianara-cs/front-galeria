@@ -16,6 +16,7 @@ export const usePhoto = () => {
   const { photoId } = useParams<{ photoId: string }>()
   const [loading, setLoading] = useState(false)
   const [loadingComments, setLoadingComments] = useState(false)
+  const [loadingSendComment, setLoadingSendComment] = useState(false)
   const [photo, setPhoto] = useState<PhotoType | undefined>()
   const [verifyLike, setVerifyLike] = useState(false)
   const { request } = useRequests()
@@ -100,6 +101,7 @@ export const usePhoto = () => {
 
   const handleComment = async () => {
     if (insertComment.texto) {
+      setLoadingSendComment(true)
       await request({
         url: URL_COMMENTS,
         method: MethodsEnum.POST,
@@ -115,6 +117,7 @@ export const usePhoto = () => {
           foto_id: photoId,
         },
       })
+      setLoadingSendComment(false)
 
       setInsertComment({ ...insertComment, texto: '' })
     }
@@ -127,6 +130,7 @@ export const usePhoto = () => {
     comments,
     insertComment,
     loadingComments,
+    loadingSendComment,
     handleLike,
     handleComment,
     onChangeInputText,

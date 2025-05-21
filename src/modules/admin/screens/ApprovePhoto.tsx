@@ -9,8 +9,15 @@ import { PhotoType } from '../../../shared/types/PhotoType'
 import { useApprovePhoto } from '../hooks/useAprovePhoto'
 
 const ApprovePhotoScreen = () => {
-  const { photos, loading, filter, statusPhoto, handleChangeFilter, handleApprovePhoto } =
-    useApprovePhoto()
+  const {
+    photos,
+    loading,
+    filter,
+    statusPhoto,
+    handleChangeFilter,
+    handleApprovePhoto,
+    handleDisapprovePhoto,
+  } = useApprovePhoto()
 
   return (
     <Screen>
@@ -41,7 +48,9 @@ const ApprovePhotoScreen = () => {
                   className="flex justify-center"
                   actions={[
                     item.aprovada ? (
-                      <Button>Desaprovar</Button>
+                      <Button type="primary" danger onClick={() => handleDisapprovePhoto(item.id)}>
+                        Desaprovar
+                      </Button>
                     ) : (
                       <Button type="primary" onClick={() => handleApprovePhoto(item.id)}>
                         Aprovar

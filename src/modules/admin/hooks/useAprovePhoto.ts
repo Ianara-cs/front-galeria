@@ -25,7 +25,8 @@ const statusPhoto = [
 ]
 
 export const useApprovePhoto = () => {
-  const { loading, request } = useRequests()
+  const { request } = useRequests()
+  const [loading, setLoading] = useState(false)
   const [photos, setPhotos] = useState<PhotoType[]>([])
   const [filter, setFilter] = useState<FilterType>({ aprovada: false })
 
@@ -46,7 +47,9 @@ export const useApprovePhoto = () => {
   }, [filter])
 
   useEffect(() => {
+    setLoading(true)
     getPhotos()
+    setLoading(false)
   }, [getPhotos])
 
   const handleChangeFilter = (value: React.ChangeEvent<HTMLSelectElement>, nameObject: string) => {
@@ -62,14 +65,13 @@ export const useApprovePhoto = () => {
       url: URL_APPROVE_PHOTO.replace('{fotoId}', `${photoId}` || ''),
       method: MethodsEnum.POST,
     })
-
     getPhotos()
   }
 
   const handleDisapprovePhoto = (photoId: number) => {
     request({
       url: URL_DISAPPROVE_PHOTO.replace('{fotoId}', `${photoId}` || ''),
-      method: MethodsEnum.DELETE,
+      method: MethodsEnum.POST,
     })
 
     getPhotos()
