@@ -56,11 +56,7 @@ const PhotoScreen = () => {
               ) : (
                 <LikeOutlined onClick={handleLike} style={{ fontSize: '20px' }} />
               )}
-              {photo!.quantidade_curtidas > 1 ? (
-                <span>{photo!.quantidade_curtidas} curtidas</span>
-              ) : (
-                <span>{photo!.quantidade_curtidas} curtida</span>
-              )}
+              <span>{photo?.quantidade_curtidas}</span>
             </div>
             <div className="flex gap-1 items-center">
               <TextArea

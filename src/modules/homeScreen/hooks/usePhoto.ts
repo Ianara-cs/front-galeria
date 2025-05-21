@@ -61,6 +61,13 @@ export const usePhoto = () => {
     await connectionAPIPost(URL_LIKE, { foto_id: photoId })
       .then(() => {
         setVerifyLike(true)
+        if (photo) {
+          setPhoto({
+            ...photo,
+            curtido: true,
+            quantidade_curtidas: photo.quantidade_curtidas + 1,
+          })
+        }
       })
       .catch(() => {
         setVerifyLike(false)
@@ -71,6 +78,13 @@ export const usePhoto = () => {
     await connectionAPIDelete(URL_DISLIKE.replace('{fotoId}', `${photoId}` || ''))
       .then(() => {
         setVerifyLike(false)
+        if (photo) {
+          setPhoto({
+            ...photo,
+            curtido: false,
+            quantidade_curtidas: photo.quantidade_curtidas - 1,
+          })
+        }
       })
       .catch(() => {
         setVerifyLike(true)
