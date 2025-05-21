@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router'
 
 import { URL_USER_ID, URL_USERS } from '../../../shared/constants/urls'
 import { InsertUser } from '../../../shared/dtos/insertUser.dto'
