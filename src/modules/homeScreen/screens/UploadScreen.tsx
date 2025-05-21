@@ -11,7 +11,7 @@ const UploadScreen = () => {
   return (
     <Screen>
       <div className="min-h-full flex items-center justify-center">
-        <div className="bg-white !p-6 rounded-2xl inset-shadow-xs shadow-xl w-full max-w-md flex flex-col gap-4">
+        <div className="bg-white !p-6 rounded-2xl inset-shadow-sm shadow-xl w-full max-w-md flex flex-col gap-4">
           <h2 className="text-xl font-semibold text-center">Escolha as fotos</h2>
           <Upload {...uploadProps} className="flex justify-center items-center max-w-md">
             <Button icon={<UploadOutlined />}></Button>

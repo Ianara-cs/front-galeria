@@ -133,7 +133,7 @@ const UsersScreen = () => {
             </div>
           </div>
         </Modal>
-        <div className="w-full !py-8 flex flex-col gap-2 md:w-[70%] xl:w-[50%]">
+        <div className="w-full !pb-8 flex flex-col gap-2 md:w-[70%] xl:w-[60%]">
           <div className="w-full shadow-md !p-4 !mb-8 solid flex flex-wrap gap-2 rounded">
             <div className="w-full sm:flex-3">
               <Input title="Nome:" onChange={(event) => handleChangeFilter(event, 'first_name')} />
@@ -162,7 +162,7 @@ const UsersScreen = () => {
                   value: '',
                   label: 'Todos',
                 }}
-                title="Tipo de Usuário:"
+                title="Tipo:"
                 options={[
                   {
                     value: '',
@@ -173,9 +173,9 @@ const UsersScreen = () => {
               />
             </div>
           </div>
-          <div className="flex justify-between">
-            <div>Lista de Usuários</div>
-            <div className="w-[30%]">
+          <div className="flex justify-between items-center !pb-3 border-b border-gray-300 solid">
+            <div className="text-base">Lista de Usuários</div>
+            <div className="mb:w-[30%]">
               <Button type="primary" onClick={() => showModal()}>
                 Criar Usuário
               </Button>
@@ -200,7 +200,9 @@ const UsersScreen = () => {
                 >
                   <List.Item.Meta
                     avatar={<Avatar size={60} src={avatar} />}
-                    title={<span>{`${item.first_name} ${item.last_name}`}</span>}
+                    title={
+                      <span className="text-base">{`${item.first_name} ${item.last_name}`}</span>
+                    }
                     description={
                       <div className="flex flex-col">
                         <span>Username: {item.username}</span>

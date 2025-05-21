@@ -22,7 +22,7 @@ const HomeScreen = () => {
                 onClick={() => handleSeePhoto(item.id)}
               >
                 <img
-                  src={item.imagem}
+                  src={item.imagem_url || item.imagem}
                   alt={`Imagem ${index + 1}`}
                   className="w-full rounded-lg shadow-md hover:scale-105 transition-transform duration-300 !mb-2"
                 />

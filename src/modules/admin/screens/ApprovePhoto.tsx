@@ -17,7 +17,7 @@ const ApprovePhotoScreen = () => {
       <div className="flex h-full justify-center">
         <div className="w-full !pt-8 mb:!pt-10 flex flex-col md:w-[70%] xl:w-[50%]">
           <div className="w-full flex justify-between items-center !pb-4">
-            <div>Lista de fotos</div>
+            <div className="font-medium">Lista de fotos</div>
             <Select
               title="Status:"
               defaultValue={`${filter.aprovada}`}
@@ -51,7 +51,7 @@ const ApprovePhotoScreen = () => {
                 >
                   <Skeleton avatar title={false} loading={loading} active>
                     <List.Item.Meta
-                      avatar={<Image width={100} src={item.imagem} />}
+                      avatar={<Image width={100} src={item.imagem_url || item.imagem} />}
                       title={<span>Enviado por {item.usuario.username}</span>}
                       description={<span>Data: {formatDate(item.data_envio)}</span>}
                     />

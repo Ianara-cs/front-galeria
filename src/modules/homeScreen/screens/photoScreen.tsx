@@ -42,7 +42,7 @@ const PhotoScreen = () => {
           {/* Imagem */}
           <div className="md:flex-1 w-full flex items-center justify-center">
             <Image
-              src={photo?.imagem}
+              src={photo?.imagem_url || photo?.imagem}
               alt="Visualização"
               className="max-h-full max-w-full object-contain rounded-xl shadow-lg"
             />
@@ -56,7 +56,11 @@ const PhotoScreen = () => {
               ) : (
                 <LikeOutlined onClick={handleLike} style={{ fontSize: '20px' }} />
               )}
-              <span>100 curtidas</span>
+              {photo!.quantidade_curtidas > 1 ? (
+                <span>{photo!.quantidade_curtidas} curtidas</span>
+              ) : (
+                <span>{photo!.quantidade_curtidas} curtida</span>
+              )}
             </div>
             <div className="flex gap-1 items-center">
               <TextArea
