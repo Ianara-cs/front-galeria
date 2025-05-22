@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { URL_USERS } from '../../../shared/constants/urls'
 import { MethodsEnum } from '../../../shared/enums/methods'
 import { useRequests } from '../../../shared/hooks/useRequest'
+import { PageQueryType } from '../../../shared/types/PageQueryType'
 import { useUsersReducer } from '../../../store/reducers/userReducer/useUsersReducer'
 import { useInsertUser } from './useInsertUser'
 
@@ -23,6 +24,10 @@ export const useUsers = () => {
     is_active: undefined,
     is_staff: undefined,
   })
+
+  const [page, setPage] = useState<PageQueryType>({
+    page: 1,
+  })
   const [open, setOpen] = useState(false)
   const [userId, setUserId] = useState('')
   const {
@@ -39,15 +44,16 @@ export const useUsers = () => {
   } = useInsertUser(userId)
 
   const getUsers = useCallback(async () => {
-    const params = { ...filters }
+    const params = { ...filters, ...page }
 
     request({
       url: URL_USERS,
       method: MethodsEnum.GET,
       saveGlobal: setParticipants,
+      isPaginate: true,
       params: params,
     })
-  }, [filters])
+  }, [filters, page])
 
   useEffect(() => {
     getUsers()
@@ -67,6 +73,12 @@ export const useUsers = () => {
     })
   }
 
+  const onChangePage = (value: number) => {
+    setPage({
+      page: value,
+    })
+  }
+
   const showModal = (user?: number) => {
     setUserId(user ? `${user}` : '')
     setOpen(true)
@@ -76,10 +88,6 @@ export const useUsers = () => {
     await handleInsertParticipant()
     await getUsers()
   }
-
-  useEffect(() => {
-    getUsers()
-  }, [getUsers])
 
   const handleCancel = () => {
     if (!isEdit) {
@@ -118,5 +126,6 @@ export const useUsers = () => {
     getUsers,
     handleChangeFilter,
     handleFilterSelect,
+    onChangePage,
   }
 }

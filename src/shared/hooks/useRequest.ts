@@ -3,6 +3,7 @@ import { NavigateFunction } from 'react-router'
 
 import { FirstScreenRoutesEnum } from '../../modules/firstScreen/routes'
 import { useGlobalReducer } from '../../store/reducers/globalReducer/useGlobalReducer'
+import { PAGE_SIZE } from '../constants/configConstants'
 import { AUTHORIZATION_KEY, REFRESH_TOKEN } from '../constants/localStorageConstants'
 import { ERROR_INVALID_PASSWORD } from '../constants/messageErrors'
 import { URL_LOGIN } from '../constants/urls'
@@ -10,6 +11,7 @@ import { MethodsEnum } from '../enums/methods'
 import { setAuthorizationToken } from '../functions/connection/auth'
 import ConnectionAPI, { connectionAPIPost, MethodType } from '../functions/connection/connectionAPI'
 import { TokensType } from '../types/TokensType'
+import { isDataPaginate } from '../types/typeGuards/isDataPaginated'
 
 interface requestParams<T> {
   url: string
@@ -17,6 +19,7 @@ interface requestParams<T> {
   saveGlobal?: (object: T) => void
   body?: unknown
   message?: string
+  isPaginate?: boolean
   params?: Record<string, any>
 }
 
@@ -30,7 +33,7 @@ interface uploadParams {
 
 export const useRequests = () => {
   const [loading, setLoading] = useState(false)
-  const { setNotification } = useGlobalReducer()
+  const { setNotification, setPaginate } = useGlobalReducer()
 
   const request = async <T>({
     url,
@@ -38,6 +41,7 @@ export const useRequests = () => {
     saveGlobal,
     body,
     message,
+    isPaginate,
     params,
   }: requestParams<T>): Promise<T | undefined> => {
     setLoading(true)
@@ -45,6 +49,14 @@ export const useRequests = () => {
     let fullUrl = url
 
     if (method === MethodsEnum.GET && params) {
+      if (isPaginate && params) {
+        params = {
+          ...params,
+          is_page: true,
+          page_size: params.page_size ?? PAGE_SIZE,
+        }
+      }
+
       const query = new URLSearchParams(params).toString()
       fullUrl += `?${query}`
     }
@@ -52,7 +64,12 @@ export const useRequests = () => {
     const returnObject: T | undefined = await ConnectionAPI.connect<T>(fullUrl, method, body)
       .then((result) => {
         if (saveGlobal) {
-          saveGlobal(result)
+          if (isPaginate && isDataPaginate<T>(result)) {
+            saveGlobal(result.results)
+            setPaginate({ totalData: result.count, currentPage: result.page })
+          } else {
+            saveGlobal(result)
+          }
         }
         if (message) {
           setNotification('Sucesso!', 'success', message)

@@ -8,6 +8,8 @@ import Input from '../../../shared/components/inputs/input/input'
 import Loading from '../../../shared/components/loading/loading'
 import Screen from '../../../shared/components/screen/screen'
 import Select from '../../../shared/components/select/select'
+import { PAGE_SIZE } from '../../../shared/constants/configConstants'
+import { useGlobalReducer } from '../../../store/reducers/globalReducer/useGlobalReducer'
 import { useUsers } from '../hooks/useUsers'
 
 const UsersScreen = () => {
@@ -19,6 +21,7 @@ const UsersScreen = () => {
     participant,
     canSend,
     open,
+    onChangePage,
     onChangeInput,
     handleChangeSelect,
     handleFilterSelect,
@@ -27,6 +30,7 @@ const UsersScreen = () => {
     handleOk,
     showModal,
   } = useUsers()
+  const { paginate } = useGlobalReducer()
 
   const statusUserOptions = [
     {
@@ -189,6 +193,15 @@ const UsersScreen = () => {
             <List
               className="demo-loadmore-list"
               itemLayout="horizontal"
+              pagination={{
+                onChange: (page) => {
+                  onChangePage(page)
+                },
+                align: 'center',
+                pageSize: PAGE_SIZE,
+                current: paginate?.currentPage,
+                total: paginate?.totalData,
+              }}
               dataSource={participants}
               renderItem={(item) => (
                 <List.Item
