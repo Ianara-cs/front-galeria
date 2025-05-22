@@ -91,24 +91,27 @@ export const useInsertUser = (userId?: string) => {
   const handleInsertParticipant = async () => {
     const { passwordAgain, ...body } = participant
 
+    if (passwordAgain != body.password) {
+      setNotification('Senha diferentes', 'warning')
+      return
+    }
+
     if (userId) {
+      const { password, ...bodyEdit } = body
+
       await request({
         url: URL_USER_ID.replace('{userId}', `${userId}`),
         method: MethodsEnum.PATCH,
-        body: body,
+        body: password ? body : bodyEdit,
         message: 'Usuário modificado!',
       })
     } else {
-      if (passwordAgain != body.password) {
-        setNotification('Senha diferentes', 'warning')
-      } else {
-        await request({
-          url: URL_USERS,
-          method: MethodsEnum.POST,
-          body: body,
-          message: 'Usuário criado!',
-        })
-      }
+      await request({
+        url: URL_USERS,
+        method: MethodsEnum.POST,
+        body: body,
+        message: 'Usuário criado!',
+      })
     }
   }
 

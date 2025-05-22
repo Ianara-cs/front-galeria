@@ -57,7 +57,6 @@ export const useApprovePhoto = () => {
       ...filter,
       [nameObject]: value,
     })
-    console.log('D', filter)
   }
 
   const handleApprovePhoto = (photoId: number) => {

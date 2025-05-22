@@ -17,7 +17,6 @@ const FirstScreen = () => {
     if (token && user) {
       navigate(HomeScreenRoutesEnum.HOME_SCREEN)
     } else {
-      console.log('FIRST', user)
       navigate(LoginRoutesEnum.LOGIN)
     }
   }, [user])

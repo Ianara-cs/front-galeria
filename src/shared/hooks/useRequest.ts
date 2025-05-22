@@ -95,7 +95,6 @@ export const useRequests = () => {
     params,
   }: uploadParams): Promise<T | undefined> => {
     setLoading(true)
-    console.log(body)
 
     let fullUrl = url
 

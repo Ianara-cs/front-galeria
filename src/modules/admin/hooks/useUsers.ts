@@ -86,16 +86,18 @@ export const useUsers = () => {
       setParticipant(DEFAULT_USER)
       setCanSend(true)
     } else {
-      if (participantReducer)
+      if (participantReducer) {
         setParticipant({
           email: participantReducer.email,
           first_name: participantReducer.first_name,
           last_name: participantReducer.last_name,
           is_staff: participantReducer.is_staff,
           username: participantReducer.username,
-          password: participantReducer.password,
           is_active: participantReducer.is_active,
+          password: '',
+          passwordAgain: '',
         })
+      }
     }
     setOpen(false)
   }

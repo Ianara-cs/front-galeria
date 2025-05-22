@@ -102,11 +102,13 @@ const UsersScreen = () => {
             <div className="flex gap-2">
               <Input
                 title="Senha:"
+                value={participant.password ?? ''}
                 type="password"
                 onChange={(event) => onChangeInput(event, 'password')}
               />
               <Input
                 title="Senha Novamente:"
+                value={participant.passwordAgain ?? ''}
                 type="password"
                 onChange={(event) => onChangeInput(event, 'passwordAgain')}
               />
