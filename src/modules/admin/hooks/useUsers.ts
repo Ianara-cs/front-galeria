@@ -8,19 +8,16 @@ import { useUsersReducer } from '../../../store/reducers/userReducer/useUsersRed
 import { useInsertUser } from './useInsertUser'
 
 type FilterProps = {
-  username: string
-  first_name: string
+  nome: string
   is_active: boolean | undefined
   is_staff: boolean | undefined
 }
 
 export const useUsers = () => {
   const { request, loading } = useRequests()
-  const { participants, setParticipants } = useUsersReducer()
-  const { participant: participantReducer } = useUsersReducer()
+  const { participant: participantReducer, participants, setParticipants } = useUsersReducer()
   const [filters, setFilters] = useState<FilterProps>({
-    username: '',
-    first_name: '',
+    nome: '',
     is_active: undefined,
     is_staff: undefined,
   })
@@ -46,7 +43,7 @@ export const useUsers = () => {
   // Debounce dos filtros
   useEffect(() => {
     const timeout = setTimeout(() => {
-      setDebouncedFilters(filters)
+      setDebouncedFilters({ ...filters })
     }, 500)
 
     return () => clearTimeout(timeout)

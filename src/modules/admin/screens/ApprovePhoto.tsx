@@ -16,6 +16,8 @@ const ApprovePhotoScreen = () => {
     loading,
     filter,
     statusPhoto,
+    users,
+    loadingUsers,
     onChangePage,
     handleChangeFilter,
     handleApprovePhoto,
@@ -27,16 +29,42 @@ const ApprovePhotoScreen = () => {
     <Screen>
       <div className="flex h-full justify-center">
         <div className="w-full !pt-8 mb:!pt-10 flex flex-col md:w-[70%] xl:w-[50%]">
+          <div className="w-full shadow-md !p-4 !mb-8 solid flex flex-wrap gap-2 rounded">
+            <div className="w-full sm:flex-2">
+              <Select
+                onChange={(event) => handleChangeFilter(event, 'usuario_id')}
+                showSearch
+                loading={loadingUsers}
+                placeholder="Selecione um usuário"
+                title="Usuário:"
+                filterOption={(input, option) =>
+                  String(option?.label ?? '')
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                options={[
+                  {
+                    value: '',
+                    label: 'Todos',
+                  },
+                  ...users.map((u) => {
+                    return { value: u.id, label: `${u.username} (${u.first_name} ${u.last_name})` }
+                  }),
+                ]}
+              />
+            </div>
+            <div className="w-full sm:flex-1">
+              <Select
+                title="Status:"
+                defaultValue={`${filter.aprovada}`}
+                value={`${filter.aprovada}`}
+                onChange={(event) => handleChangeFilter(event, 'aprovada')}
+                options={statusPhoto}
+              />
+            </div>
+          </div>
           <div className="w-full flex justify-between items-center !pb-4">
             <div className="font-medium">Lista de fotos</div>
-            <Select
-              title="Status:"
-              defaultValue={`${filter.aprovada}`}
-              value={`${filter.aprovada}`}
-              onChange={(event) => handleChangeFilter(event, 'aprovada')}
-              options={statusPhoto}
-              className="w-[150px] mb:w-[200px]"
-            />
           </div>
           {loading ? (
             <div className="flex h-full justify-center items-center">

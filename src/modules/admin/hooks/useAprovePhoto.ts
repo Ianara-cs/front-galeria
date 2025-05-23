@@ -1,13 +1,20 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import { URL_APPROVE_PHOTO, URL_DISAPPROVE_PHOTO, URL_PHOTOS } from '../../../shared/constants/urls'
+import {
+  URL_APPROVE_PHOTO,
+  URL_DISAPPROVE_PHOTO,
+  URL_PHOTOS,
+  URL_USERS,
+} from '../../../shared/constants/urls'
 import { MethodsEnum } from '../../../shared/enums/methods'
 import { useRequests } from '../../../shared/hooks/useRequest'
 import { PageQueryType } from '../../../shared/types/PageQueryType'
 import { PhotoType } from '../../../shared/types/PhotoType'
+import { useUsersReducer } from '../../../store/reducers/userReducer/useUsersReducer'
 
 type FilterType = {
   aprovada: boolean | string
+  usuario_id: string
 }
 
 const statusPhoto = [
@@ -28,8 +35,10 @@ const statusPhoto = [
 export const useApprovePhoto = () => {
   const { request } = useRequests()
   const [loading, setLoading] = useState(false)
+  const [loadingUsers, setLoadingUsers] = useState(false)
   const [photos, setPhotos] = useState<PhotoType[]>([])
-  const [filter, setFilter] = useState<FilterType>({ aprovada: false })
+  const { participants: users, setParticipants: setUsers } = useUsersReducer()
+  const [filter, setFilter] = useState<FilterType>({ aprovada: false, usuario_id: '' })
   const [page, setPage] = useState<PageQueryType>({
     page: 1,
   })
@@ -42,6 +51,7 @@ export const useApprovePhoto = () => {
       }
     }
     params = {
+      usuario_id: filter.usuario_id ? Number(filter.usuario_id) : '',
       ...params,
       ...page,
     }
@@ -59,6 +69,21 @@ export const useApprovePhoto = () => {
     setLoading(true)
     getPhotos()
   }, [getPhotos])
+
+  useEffect(() => {
+    const getUsers = async () => {
+      setLoadingUsers(true)
+
+      await request({
+        url: URL_USERS,
+        method: MethodsEnum.GET,
+        saveGlobal: setUsers,
+        isPaginate: true,
+      }).finally(() => setLoadingUsers(false))
+    }
+
+    getUsers()
+  }, [])
 
   const handleChangeFilter = (value: React.ChangeEvent<HTMLSelectElement>, nameObject: string) => {
     setFilter({
@@ -102,6 +127,8 @@ export const useApprovePhoto = () => {
     filter,
     statusPhoto,
     page,
+    users,
+    loadingUsers,
     onChangePage,
     handleDisapprovePhoto,
     handleChangeFilter,

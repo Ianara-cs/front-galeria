@@ -140,7 +140,11 @@ const UsersScreen = () => {
         <div className="w-full !pb-8 flex flex-col gap-2 md:w-[70%] xl:w-[60%]">
           <div className="w-full shadow-md !p-4 !mb-8 solid flex flex-wrap gap-2 rounded">
             <div className="w-full sm:flex-3">
-              <Input title="Nome:" onChange={(event) => handleChangeFilter(event, 'first_name')} />
+              <Input
+                title="Nome:"
+                placeholder="Nome, sobrenome e username"
+                onChange={(event) => handleChangeFilter(event, 'nome')}
+              />
             </div>
             <div className="w-full sm:flex-1">
               <Select
