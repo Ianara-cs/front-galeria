@@ -15,3 +15,5 @@ export const URL_LIKE = `${urlBase}/core/curtidas/`
 export const URL_DISLIKE = `${urlBase}/core/curtidas/foto/{fotoId}/`
 
 export const URL_COMMENTS = `${urlBase}/core/comentarios/`
+export const URL_COMMENT = `${urlBase}/core/comentarios/{commentId}/`
+export const URL_EDIT_COMMENT = `${urlBase}/core/comentarios/{commentId}/`

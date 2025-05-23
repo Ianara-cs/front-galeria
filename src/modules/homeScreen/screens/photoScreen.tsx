@@ -1,5 +1,5 @@
-import { ArrowLeftOutlined, LikeFilled, LikeOutlined } from '@ant-design/icons'
-import { Avatar, Image } from 'antd'
+import { ArrowLeftOutlined, EditOutlined, LikeFilled, LikeOutlined } from '@ant-design/icons'
+import { Avatar, Image, Modal } from 'antd'
 import { Link } from 'react-router'
 
 import avatar from '/assets/user.png'
@@ -9,6 +9,7 @@ import TextArea from '../../../shared/components/inputs/textArea/textArea'
 import Loading from '../../../shared/components/loading/loading'
 import Screen from '../../../shared/components/screen/screen'
 import { formatDate } from '../../../shared/functions/utils/conversions'
+import { useGlobalReducer } from '../../../store/reducers/globalReducer/useGlobalReducer'
 import { usePhoto } from '../hooks/usePhoto'
 
 const PhotoScreen = () => {
@@ -17,13 +18,20 @@ const PhotoScreen = () => {
     photo,
     insertComment,
     loadingSendComment,
+    isModalOpen,
+    editComment,
+    loadingComment,
     onChangeInputText,
     handleLike,
     verifyLike,
     handleComment,
     handleDislike,
+    showModal,
+    handleCancel,
+    onChangeInputTextEdit,
     comments,
   } = usePhoto()
+  const { user } = useGlobalReducer()
 
   return (
     <Screen>
@@ -87,8 +95,8 @@ const PhotoScreen = () => {
                 </div>
               ) : (
                 comments.map((c, i) => (
-                  <div key={i} className="flex gap-3 !p-2 rounded-md">
-                    <Avatar className="" src={avatar} />
+                  <div key={i} className="flex gap-2 !p-2 rounded-md">
+                    <Avatar src={avatar} />
                     <div className="flex flex-col gap-0.5 w-full break-words overflow-hidden">
                       <div className="text-sm">
                         <span className="font-bold">{c.usuario.nome || c.usuario.username}</span>{' '}
@@ -98,6 +106,7 @@ const PhotoScreen = () => {
                         {formatDate(c.data_criacao)}
                       </span>
                     </div>
+                    {user?.id == c.usuario.id && <EditOutlined onClick={() => showModal(c.id)} />}
                   </div>
                 ))
               )}
@@ -105,6 +114,22 @@ const PhotoScreen = () => {
           </div>
         </div>
       )}
+      <Modal
+        open={isModalOpen}
+        onOk={handleComment}
+        onCancel={handleCancel}
+        okButtonProps={{ disabled: !editComment.texto }}
+        okText="Editar"
+        cancelText="Cancelar"
+        loading={loadingComment}
+        closable={false}
+      >
+        <TextArea
+          onChange={onChangeInputTextEdit}
+          value={editComment.texto}
+          style={{ height: 80 }}
+        />
+      </Modal>
     </Screen>
   )
 }

@@ -1,7 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 
-import { URL_COMMENTS, URL_DISLIKE, URL_LIKE, URL_PHOTO_ID } from '../../../shared/constants/urls'
+import {
+  URL_COMMENT,
+  URL_COMMENTS,
+  URL_DISLIKE,
+  URL_LIKE,
+  URL_PHOTO_ID,
+} from '../../../shared/constants/urls'
 import { InsertComment } from '../../../shared/dtos/insertComment.dto'
 import { MethodsEnum } from '../../../shared/enums/methods'
 import {
@@ -16,6 +22,7 @@ export const usePhoto = () => {
   const { photoId } = useParams<{ photoId: string }>()
   const [loading, setLoading] = useState(false)
   const [loadingComments, setLoadingComments] = useState(false)
+  const [loadingComment, setLoadingComment] = useState(false)
   const [loadingSendComment, setLoadingSendComment] = useState(false)
   const [photo, setPhoto] = useState<PhotoType | undefined>()
   const [verifyLike, setVerifyLike] = useState(false)
@@ -25,6 +32,12 @@ export const usePhoto = () => {
     foto_id: Number(photoId),
     texto: '',
   })
+  const [editComment, setEditComment] = useState<InsertComment>({
+    foto_id: Number(photoId),
+    texto: '',
+  })
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [commentId, setCommentId] = useState<number | string>('')
 
   useEffect(() => {
     const getPhoto = async () => {
@@ -92,6 +105,13 @@ export const usePhoto = () => {
       })
   }
 
+  const onChangeInputTextEdit = (value: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setEditComment({
+      ...editComment,
+      texto: value.target.value,
+    })
+  }
+
   const onChangeInputText = (value: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInsertComment({
       ...insertComment,
@@ -100,8 +120,20 @@ export const usePhoto = () => {
   }
 
   const handleComment = async () => {
-    if (insertComment.texto) {
-      setLoadingSendComment(true)
+    setLoadingSendComment(true)
+
+    if (commentId) {
+      await request({
+        url: URL_COMMENT.replace('{commentId}', `${commentId}`),
+        method: MethodsEnum.PATCH,
+        body: editComment,
+        saveGlobal: setEditComment,
+      })
+
+      handleCancel()
+    }
+
+    if (insertComment.texto && insertComment.foto_id) {
       await request({
         url: URL_COMMENTS,
         method: MethodsEnum.POST,
@@ -109,19 +141,44 @@ export const usePhoto = () => {
         saveGlobal: setInsertComment,
       })
 
-      await request({
-        url: URL_COMMENTS,
-        method: MethodsEnum.GET,
-        saveGlobal: setComments,
-        params: {
-          foto_id: photoId,
-        },
-      })
-      setLoadingSendComment(false)
-
       setInsertComment({ ...insertComment, texto: '' })
     }
+
+    await request({
+      url: URL_COMMENTS,
+      method: MethodsEnum.GET,
+      saveGlobal: setComments,
+      params: {
+        foto_id: photoId,
+      },
+    })
+    setLoadingSendComment(false)
   }
+
+  const showModal = (id: number) => {
+    setCommentId(id)
+    setLoadingComment(true)
+    setIsModalOpen(true)
+  }
+
+  const handleCancel = () => {
+    setCommentId('')
+    setIsModalOpen(false)
+    setEditComment({ ...editComment, texto: '' })
+  }
+
+  useEffect(() => {
+    if (isModalOpen && commentId) {
+      request({
+        url: URL_COMMENT.replace('{commentId}', `${commentId}`),
+        method: MethodsEnum.GET,
+        body: editComment,
+        saveGlobal: setEditComment,
+      }).finally(() => {
+        setLoadingComment(false)
+      })
+    }
+  }, [isModalOpen])
 
   return {
     loading,
@@ -131,9 +188,15 @@ export const usePhoto = () => {
     insertComment,
     loadingComments,
     loadingSendComment,
+    isModalOpen,
+    editComment,
+    loadingComment,
+    onChangeInputTextEdit,
     handleLike,
     handleComment,
     onChangeInputText,
     handleDislike,
+    showModal,
+    handleCancel,
   }
 }
