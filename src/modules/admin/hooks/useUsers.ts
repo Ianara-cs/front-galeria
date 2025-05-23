@@ -24,7 +24,7 @@ export const useUsers = () => {
     is_active: undefined,
     is_staff: undefined,
   })
-
+  const [debouncedFilters, setDebouncedFilters] = useState<FilterProps>(filters)
   const [page, setPage] = useState<PageQueryType>({
     page: 1,
   })
@@ -43,8 +43,17 @@ export const useUsers = () => {
     handleInsertParticipant,
   } = useInsertUser(userId)
 
+  // Debounce dos filtros
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedFilters(filters)
+    }, 500)
+
+    return () => clearTimeout(timeout)
+  }, [filters])
+
   const getUsers = useCallback(async () => {
-    const params = { ...filters, ...page }
+    const params = { ...debouncedFilters, ...page }
 
     request({
       url: URL_USERS,
@@ -53,7 +62,7 @@ export const useUsers = () => {
       isPaginate: true,
       params: params,
     })
-  }, [filters, page])
+  }, [debouncedFilters, page])
 
   useEffect(() => {
     getUsers()
@@ -64,12 +73,20 @@ export const useUsers = () => {
       ...filters,
       [nameObject]: value.target.value,
     })
+
+    setPage({
+      page: 1,
+    })
   }
 
   const handleFilterSelect = (value: React.ChangeEvent<HTMLSelectElement>, nameObject: string) => {
     setFilters({
       ...filters,
       [nameObject]: value,
+    })
+
+    setPage({
+      page: 1,
     })
   }
 

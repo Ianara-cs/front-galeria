@@ -4,8 +4,10 @@ import Button from '../../../shared/components/button/button'
 import Loading from '../../../shared/components/loading/loading'
 import Screen from '../../../shared/components/screen/screen'
 import Select from '../../../shared/components/select/select'
+import { PAGE_SIZE } from '../../../shared/constants/configConstants'
 import { formatDate } from '../../../shared/functions/utils/conversions'
 import { PhotoType } from '../../../shared/types/PhotoType'
+import { useGlobalReducer } from '../../../store/reducers/globalReducer/useGlobalReducer'
 import { useApprovePhoto } from '../hooks/useAprovePhoto'
 
 const ApprovePhotoScreen = () => {
@@ -14,10 +16,12 @@ const ApprovePhotoScreen = () => {
     loading,
     filter,
     statusPhoto,
+    onChangePage,
     handleChangeFilter,
     handleApprovePhoto,
     handleDisapprovePhoto,
   } = useApprovePhoto()
+  const { paginate } = useGlobalReducer()
 
   return (
     <Screen>
@@ -42,6 +46,15 @@ const ApprovePhotoScreen = () => {
             <List
               className="demo-loadmore-list"
               itemLayout="horizontal"
+              pagination={{
+                onChange: (page) => {
+                  onChangePage(page)
+                },
+                align: 'center',
+                pageSize: PAGE_SIZE,
+                current: paginate?.currentPage,
+                total: paginate?.totalData,
+              }}
               dataSource={photos}
               renderItem={(item: PhotoType) => (
                 <List.Item

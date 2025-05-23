@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { URL_APPROVE_PHOTO, URL_DISAPPROVE_PHOTO, URL_PHOTOS } from '../../../shared/constants/urls'
 import { MethodsEnum } from '../../../shared/enums/methods'
 import { useRequests } from '../../../shared/hooks/useRequest'
+import { PageQueryType } from '../../../shared/types/PageQueryType'
 import { PhotoType } from '../../../shared/types/PhotoType'
 
 type FilterType = {
@@ -29,22 +30,27 @@ export const useApprovePhoto = () => {
   const [loading, setLoading] = useState(false)
   const [photos, setPhotos] = useState<PhotoType[]>([])
   const [filter, setFilter] = useState<FilterType>({ aprovada: false })
+  const [page, setPage] = useState<PageQueryType>({
+    page: 1,
+  })
 
   const getPhotos = useCallback(async () => {
     let params = {}
     if (filter.aprovada !== '') {
       params = {
         ...filter,
+        ...page,
       }
     }
 
     await request({
       url: URL_PHOTOS,
       method: MethodsEnum.GET,
+      isPaginate: true,
       saveGlobal: setPhotos,
       params: params,
     })
-  }, [filter])
+  }, [filter, page])
 
   useEffect(() => {
     setLoading(true)
@@ -56,6 +62,15 @@ export const useApprovePhoto = () => {
     setFilter({
       ...filter,
       [nameObject]: value,
+    })
+    setPage({
+      page: 1,
+    })
+  }
+
+  const onChangePage = (value: number) => {
+    setPage({
+      page: value,
     })
   }
 
@@ -81,6 +96,8 @@ export const useApprovePhoto = () => {
     loading,
     filter,
     statusPhoto,
+    page,
+    onChangePage,
     handleDisapprovePhoto,
     handleChangeFilter,
     handleApprovePhoto,
