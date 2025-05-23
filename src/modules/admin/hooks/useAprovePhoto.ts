@@ -39,8 +39,11 @@ export const useApprovePhoto = () => {
     if (filter.aprovada !== '') {
       params = {
         ...filter,
-        ...page,
       }
+    }
+    params = {
+      ...params,
+      ...page,
     }
 
     await request({
@@ -49,13 +52,12 @@ export const useApprovePhoto = () => {
       isPaginate: true,
       saveGlobal: setPhotos,
       params: params,
-    })
+    }).finally(() => setLoading(false))
   }, [filter, page])
 
   useEffect(() => {
     setLoading(true)
     getPhotos()
-    setLoading(false)
   }, [getPhotos])
 
   const handleChangeFilter = (value: React.ChangeEvent<HTMLSelectElement>, nameObject: string) => {
@@ -74,21 +76,24 @@ export const useApprovePhoto = () => {
     })
   }
 
-  const handleApprovePhoto = (photoId: number) => {
-    request({
+  const handleApprovePhoto = async (photoId: number) => {
+    await request({
       url: URL_APPROVE_PHOTO.replace('{fotoId}', `${photoId}` || ''),
       method: MethodsEnum.POST,
     })
-    getPhotos()
+
+    setLoading(true)
+    await getPhotos()
   }
 
-  const handleDisapprovePhoto = (photoId: number) => {
-    request({
+  const handleDisapprovePhoto = async (photoId: number) => {
+    await request({
       url: URL_DISAPPROVE_PHOTO.replace('{fotoId}', `${photoId}` || ''),
       method: MethodsEnum.POST,
     })
 
-    getPhotos()
+    setLoading(true)
+    await getPhotos()
   }
 
   return {
